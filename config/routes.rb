@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  get 'servers/connect' => 'servers#connect'
+  get 'servers/connect' => 'servers#connect', as: :connect
   post 'servers/do_connect' =>'servers#do_connect'
   resources :servers
 

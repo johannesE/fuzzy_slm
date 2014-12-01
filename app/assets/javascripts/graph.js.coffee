@@ -1,4 +1,4 @@
-$(document).ready ->
+ready () ->
   tick = ->
     link.attr("x1", (d) ->
       d.source.x
@@ -27,13 +27,13 @@ $(document).ready ->
     height
   ]).charge(-400).linkDistance(50).on("tick", tick)
   drag = force.drag().on("dragstart", dragstart)
-  svg = d3.select("#graph").append("svg").attr("width", width).attr("height", height)
+  svg = d3.select(".graph").append("svg").attr("width", width).attr("height", height)
   link = svg.selectAll(".link")
   node = svg.selectAll(".node")
   blubb = ->
     console.log($('#graph').data('nodes'))
-    nodesD = $('#graph').data('nodes')
-    linksD = $('#graph').data('links')
+    nodesD = $('.graph').data('nodes')
+    linksD = $('.graph').data('links')
 
     force.nodes(nodesD).links(linksD).start()
     link = link.data(linksD).enter().append("line").attr("class", "link")
@@ -51,3 +51,5 @@ $(document).ready ->
   blubb()
   console.log "ended to draw the graph"
   return
+$(document).on('page:load', ready)
+$(document).ready(ready)
