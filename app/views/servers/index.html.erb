@@ -24,6 +24,8 @@
 <br>
 <br>
 <%= link_to 'New Server', new_server_path %>
+<%= content_tag "div", id: "graph", data: { nodes: @nodes, links: @links} do %>
 
-<div id="graph">
-</div>
+<% end %>
+<!--<div id="graph">-->
+<!--</div>-->

@@ -4,10 +4,7 @@ class ServersController < ApplicationController
   # GET /servers
   # GET /servers.json
   def index
-    @servers = Server.all
-    @neo_servers = get_all_neo_servers.map { |s| {"server" => s[0]} }
-    # @neo_servers = @neo_servers.to_json
-    # .inject({}) { |h, i| t = h; i.each { |n| t[n] ||= {}; t = t[n] }; h }.to_json
+    retrieve_data_for_graph
   end
 
   # GET /servers/1
@@ -25,8 +22,7 @@ class ServersController < ApplicationController
   end
 
   def connect
-    @servers = Server.all
-    @neo_servers = get_all_neo_servers.map { |s| {"server" => s[0]} }
+    retrieve_data_for_graph
   end
 
   def do_connect
@@ -34,7 +30,7 @@ class ServersController < ApplicationController
     server1 = Neography::Node.load(params[:neoServer1], @neo)
     server2 = Neography::Node.load(params[:neoServer2], @neo)
     coupling = params[:coupling]
-    relation = @neo.create_relationship("connected", server1, server2)
+    relation = @neo.create_relationship(:connected, server1, server2)
     @neo.set_relationship_properties(relation, {weight: coupling})
     redirect_to action: 'connect', notice: 'Connection was successfully created.'
   end
@@ -98,5 +94,39 @@ class ServersController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def server_params
     params.require(:server).permit(:name)
+  end
+
+
+  def retrieve_data_for_graph
+    @servers = Server.all
+    @neo_servers = get_all_neo_servers.map { |s| {"server" => s[0]} }
+    @nodes = []
+    x=y=10
+    @neo_servers.each do |neo|
+      @nodes << {x: x, y: y, name: neo['server']['data']['name']}
+      x += 5; y += 5
+    end
+    @links = []
+    source_id = 0
+    @neo_servers.each do |neo|
+      server = Neography::Node.load(neo['server']['data']['id'], @neo)
+      if server.rel?(:outgoing, :connected)
+        relationships = server.rels(:connected).outgoing
+        relationships.each do |relationship|
+
+          relationship_weight = @neo.get_relationship_properties(relationship, ["weight"])
+          target_node_id = relationship.end_node[:id]
+          target_id = 0 # we need to have relative numbers for d3.js
+          @neo_servers.each do |possible_target|
+            break if possible_target['server']['data']['id'] == target_node_id
+            target_id += 1
+          end
+          #enter everything into the @links array
+          @links << {source: source_id, target: target_id, weight: relationship_weight}
+
+        end
+      end
+      source_id +=1 # check out the next source in the next iteration
+    end
   end
 end
