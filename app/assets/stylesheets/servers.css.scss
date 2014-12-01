@@ -1,0 +1,27 @@
+// Place all the styles related to the servers controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+.link {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node {
+  cursor: move;
+  fill: #ccc;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node.fixed {
+  fill: #f00;
+}
+
+.node text {
+  pointer-events: none;
+  font: 10px sans-serif;
+}
+
+svg{
+  border: 1px solid #414141 ;
+}
