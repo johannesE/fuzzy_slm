@@ -41,3 +41,4 @@ config/secrets.yml
 *.bowerrc
 bower.json
 
+/neo4j/data
