@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   get 'servers/connect' => 'servers#connect'
+  post 'servers/do_connect' =>'servers#do_connect'
   resources :servers
 
   get 'welcome/index'

@@ -29,6 +29,16 @@ class ServersController < ApplicationController
     @neo_servers = get_all_neo_servers.map { |s| {"server" => s[0]} }
   end
 
+  def do_connect
+    @neo = Neography::Rest.new
+    server1 = Neography::Node.load(params[:neoServer1], @neo)
+    server2 = Neography::Node.load(params[:neoServer2], @neo)
+    coupling = params[:coupling]
+    relation = @neo.create_relationship("connected", server1, server2)
+    @neo.set_relationship_properties(relation, {weight: coupling})
+    redirect_to action: 'connect', notice: 'Connection was successfully created.'
+  end
+
   # POST /servers
   # POST /servers.json
   def create

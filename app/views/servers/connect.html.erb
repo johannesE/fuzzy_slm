@@ -1,9 +1,21 @@
 <h1>Connect two Nodes through fuzzy coupling</h1>
 
-<select name="neoServer1">
-  <% @neo_servers.each do |neo| %>
-      <option value="<%= neo['server']['data']['id'] %>"><%= neo['server']['data']['name'] %></option>
-  <% end %>
-</select>
+<%= form_tag 'do_connect' do %>
+    <select name="neoServer1">
+      <% @neo_servers.each do |neo| %>
+          <option value="<%= neo['server']['data']['id'] %>"><%= neo['server']['data']['name'] %></option>
+      <% end %>
+    </select>
+
+    <%= number_field_tag 'coupling', nil, :step => 0.05, :in => 0..1 %>
+
+    <select name="neoServer2">
+      <% @neo_servers.each do |neo| %>
+          <option value="<%= neo['server']['data']['id'] %>"><%= neo['server']['data']['name'] %></option>
+      <% end %>
+    </select>
+
+    <%= submit_tag %>
+<% end %>
 <br>
 <div id="graph"></div>
