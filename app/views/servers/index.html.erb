@@ -21,17 +21,9 @@
 </table>
 
 <br>
-
-<div id="graph">
-</div>
-
-<div id="chart">
-  <% @neo_servers.each do |server| %>
-      <div id="node">
-        <%= server['server']['data']['name'] %> <br>
-      </div>
-  <% end %>
-</div>
 <br>
 <br>
 <%= link_to 'New Server', new_server_path %>
+
+<div id="graph">
+</div>

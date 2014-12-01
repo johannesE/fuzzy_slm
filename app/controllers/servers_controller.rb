@@ -7,7 +7,6 @@ class ServersController < ApplicationController
     @servers = Server.all
     @neo_servers = get_all_neo_servers.map { |s| {"server" => s[0]} }
     # @neo_servers = @neo_servers.to_json
-    # @neo_servers = data = get_all_neo_servers
     # .inject({}) { |h, i| t = h; i.each { |n| t[n] ||= {}; t = t[n] }; h }.to_json
   end
 
@@ -25,6 +24,11 @@ class ServersController < ApplicationController
   def edit
   end
 
+  def connect
+    @servers = Server.all
+    @neo_servers = get_all_neo_servers.map { |s| {"server" => s[0]} }
+  end
+
   # POST /servers
   # POST /servers.json
   def create
@@ -32,7 +36,9 @@ class ServersController < ApplicationController
     @neo = Neography::Rest.new
 
     respond_to do |format|
-      if @server.save && @neo.create_node("name" => server_params[:name])
+      if @server.save && n = Neography::Node.create("name" => server_params[:name])
+        n.add_to_index('servers', 'name', server_params[:name])
+        n.id = n.neo_id # this construct should be improved..
         format.html { redirect_to @server, notice: 'Server was successfully created.' }
         format.json { render :show, status: :created, location: @server }
       else
@@ -59,6 +65,8 @@ class ServersController < ApplicationController
   # DELETE /servers/1
   # DELETE /servers/1.json
   def destroy
+    n = Neography::Node.find('servers', 'name', @server.name)
+    n.del if n
     @server.destroy
     respond_to do |format|
       format.html { redirect_to servers_url, notice: 'Server was successfully destroyed.' }

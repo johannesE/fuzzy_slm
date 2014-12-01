@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+
+  get 'servers/connect' => 'servers#connect'
   resources :servers
 
   get 'welcome/index'
