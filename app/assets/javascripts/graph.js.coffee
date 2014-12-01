@@ -1,4 +1,7 @@
-ready () ->
+$(document).on('page:load', doGraphStuff())
+$(document).ready(doGraphStuff())
+
+doGraphStuff () ->
   tick = ->
     link.attr("x1", (d) ->
       d.source.x
@@ -51,5 +54,3 @@ ready () ->
   blubb()
   console.log "ended to draw the graph"
   return
-$(document).on('page:load', ready)
-$(document).ready(ready)
