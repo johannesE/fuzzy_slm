@@ -1,0 +1,15 @@
+== README
+
+To get this application running, please use
+* ruby 2.1.1p76 (2014-02-24 revision 45161) [x86_64-linux]
+
+This application is built with
+* gem 'rails', '4.1.6'
+
+Then you should run:
+* bundle install
+* rake db:migrate
+* rake neo4j:start
+
+
+
