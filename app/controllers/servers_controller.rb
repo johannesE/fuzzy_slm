@@ -29,9 +29,9 @@ class ServersController < ApplicationController
     @neo = Neography::Rest.new
     server1 = Neography::Node.load(params[:neoServer1], @neo)
     server2 = Neography::Node.load(params[:neoServer2], @neo)
-    coupling = params[:coupling]
     relation = @neo.create_relationship(:connected, server1, server2)
-    @neo.set_relationship_properties(relation, {weight: coupling})
+    @neo.set_relationship_properties(relation, {tight: params[:tight_coupling]})
+    @neo.set_relationship_properties(relation, {loose: params[:loose_coupling]})
     redirect_to action: 'connect', notice: 'Connection was successfully created.'
   end
 
@@ -58,6 +58,10 @@ class ServersController < ApplicationController
   # PATCH/PUT /servers/1.json
   def update
     respond_to do |format|
+      name  = Server.find(params[:id]).name
+      n = Neography::Node.find('servers', 'name', name)
+      n.name = server_params[:name]
+      n.add_to_index('servers', 'name', server_params[:name]) #TODO: is this necessary?
       if @server.update(server_params)
         format.html { redirect_to @server, notice: 'Server was successfully updated.' }
         format.json { render :show, status: :ok, location: @server }
