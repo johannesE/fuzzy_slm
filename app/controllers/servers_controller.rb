@@ -129,8 +129,8 @@ class ServersController < ApplicationController
         relationships = server.rels(:connected).outgoing
         relationships.each do |relationship|
 
-          tightness = @neo.get_relationship_properties(relationship, ["tight"])
-          looseness = @neo.get_relationship_properties(relationship, ["loose"])
+          tightness = @neo.get_relationship_properties(relationship, [:tight])[:tight]
+          looseness = @neo.get_relationship_properties(relationship, [:loose])[:loose]
           target_node_id = relationship.end_node[:id]
           target_id = 0 # we need to have relative numbers for d3.js
           @neo_servers.each do |possible_target|
