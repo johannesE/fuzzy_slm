@@ -25,6 +25,7 @@
 <br>
 <%= link_to 'New Server', new_server_path %>
 <%= link_to 'Add some relationships here.', connect_path %>
+<%= link_to 'Destroy all data', destroy_everything_path, :method => :post, data: {confirm: 'Are you sure?'} %>
 <%= content_tag "div", class: "graph", data: { nodes: @nodes, links: @links} do %>
 
 <% end %>

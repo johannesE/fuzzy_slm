@@ -15,4 +15,9 @@ Then you should run:
 * rake neo4j:start
 
 
+Additional Features compared to python script:
++ Renaming of Nodes
++ Immediate visualization of the results
++ Web-Based (Many people working on the same data at the same time etc.)
+
 

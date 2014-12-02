@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   get 'servers/connect' => 'servers#connect', as: :connect
+  post 'servers/destroy_everything' => 'servers#destroy_everything', as: :destroy_everything
   post 'servers/do_connect' =>'servers#do_connect'
   resources :servers
 

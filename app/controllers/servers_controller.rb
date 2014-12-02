@@ -75,19 +75,30 @@ class ServersController < ApplicationController
   # DELETE /servers/1
   # DELETE /servers/1.json
   def destroy
-    n = Neography::Node.find('servers', 'name', @server.name)
-    n.del if n
-    @server.destroy
-    respond_to do |format|
-      format.html { redirect_to servers_url, notice: 'Server was successfully destroyed.' }
-      format.json { head :no_content }
+    destroy_server @server
+  end
+
+  def destroy_everything
+    Server.all.each do |server|
+      destroy_server server
     end
+    redirect_to action: 'index', notice: 'Everything was successfully destroyed.'
   end
 
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_server
     @server = Server.find(params[:id])
+  end
+
+  def destroy_server(server)
+    n = Neography::Node.find('servers', 'name', server.name)
+    n.del if n
+    server.destroy
+    respond_to do |format|
+      format.html { redirect_to servers_url, notice: 'Server was successfully destroyed.' }
+      format.json { head :no_content }
+    end
   end
 
   def get_all_neo_servers
@@ -118,7 +129,8 @@ class ServersController < ApplicationController
         relationships = server.rels(:connected).outgoing
         relationships.each do |relationship|
 
-          relationship_weight = @neo.get_relationship_properties(relationship, ["weight"])
+          tightness = @neo.get_relationship_properties(relationship, ["tight"])
+          looseness = @neo.get_relationship_properties(relationship, ["loose"])
           target_node_id = relationship.end_node[:id]
           target_id = 0 # we need to have relative numbers for d3.js
           @neo_servers.each do |possible_target|
@@ -126,7 +138,7 @@ class ServersController < ApplicationController
             target_id += 1
           end
           #enter everything into the @links array
-          @links << {source: source_id, target: target_id, weight: relationship_weight}
+          @links << {source: source_id, target: target_id, tight: tightness, loose: looseness}
 
         end
       end
