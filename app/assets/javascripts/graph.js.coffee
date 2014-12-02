@@ -9,7 +9,10 @@ doGraphStuff = ->
       d.target.x
     ).attr "y2", (d) ->
       d.target.y
-
+    linktext.attr "x", (d) ->
+      (d.source.x + d.target.x) / 2 - 10
+    .attr "y", (d) ->
+      (d.source.y + d.target.y) / 2 - 4
     node.attr "transform", (d) ->
       "translate(" + d.x + "," + d.y + ")"
 
@@ -31,13 +34,18 @@ doGraphStuff = ->
   svg = d3.select(".graph").append("svg").attr("width", width).attr("height", height)
   link = svg.selectAll(".link")
   node = svg.selectAll(".node")
+  linktext = svg.selectAll(".text")
   blubb = ->
-    console.log($('#graph').data('nodes'))
     nodesD = $('.graph').data('nodes')
     linksD = $('.graph').data('links')
 
     force.nodes(nodesD).links(linksD).start()
     link = link.data(linksD).enter().append("line").attr("class", "link")
+    linktext =linktext.data(linksD).enter().append("text")
+    .attr("dx", 12)
+    .attr("dy", ".35em")
+    .attr("class", "text")
+    .text((d) -> d.tight + ", "+ d.loose)
     node = node.data(nodesD).enter().append("g").attr("class", "node")
     .on("dblclick", dblclick).call(drag)
 
