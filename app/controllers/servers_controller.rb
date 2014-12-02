@@ -101,10 +101,10 @@ class ServersController < ApplicationController
     @servers = Server.all
     @neo_servers = get_all_neo_servers.map { |s| {"server" => s[0]} }
     @nodes = []
-    x=y=10
+    x=y=10 #coordinates
     @neo_servers.each do |neo|
       @nodes << {x: x, y: y, name: neo['server']['data']['name']}
-      x += 5; y += 5
+      x += 10; y += 2
     end
     @links = []
     source_id = 0
