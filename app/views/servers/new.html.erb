@@ -1,5 +1,41 @@
+<html>
+<head>
+<nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="../">Home</a></h1>
+    </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+
+    <ul class="left">
+      <li><a href="/servers">Listing servers</a></li>
+      <li class="active"><a href="/servers/new">New server</a></li>
+      <li><a href="/servers/connect">Add relationships</a></li>
+       </ul>
+  </section>
+</nav>
+<head>
+<body>
+
 <h1>New server</h1>
 
-<%= render 'form' %>
 
-<%= link_to 'Back', servers_path %>
+<div id="mysection">
+
+
+   <%=  render 'form' %>
+
+                </div>
+
+
+
+
+<br><br><br><br>
+<%= link_to 'Back', servers_path , class: 'button large radius' %>
+
+</body>
+</html>
