@@ -21,6 +21,7 @@ class ServersController < ApplicationController
   def edit
   end
 
+  # GET or POST
   def coupling
     retrieve_data_for_graph
     @server1 = params[:neoServer1]
@@ -50,10 +51,12 @@ class ServersController < ApplicationController
     render 'servers/coupling'
   end
 
+  #GET
   def connect
     retrieve_data_for_graph
   end
 
+  #POST
   def do_connect
     tight = params[:tight_coupling]
     loose = params[:loose_coupling]
@@ -61,6 +64,10 @@ class ServersController < ApplicationController
       @neo = Neography::Rest.new
       server1 = Neography::Node.load(params[:neoServer1], @neo)
       server2 = Neography::Node.load(params[:neoServer2], @neo)
+      direct_path = @neo.get_node_relationships_to(@server1, @server2)
+      if direct_path[0] != nil #there exists already a relation, so delete that before creating a new one
+        @neo.delete_relationship direct_path[0]
+      end
       relation = @neo.create_relationship(:connected, server1, server2)
       @neo.set_relationship_properties(relation, {tight: tight})
       @neo.set_relationship_properties(relation, {loose: loose})
@@ -70,8 +77,8 @@ class ServersController < ApplicationController
     end
   end
 
-  # POST /servers
-  # POST /servers.json
+# POST /servers
+# POST /servers.json
   def create
     @server = Server.new(server_params)
     @neo = Neography::Rest.new
@@ -89,8 +96,8 @@ class ServersController < ApplicationController
     end
   end
 
-  # PATCH/PUT /servers/1
-  # PATCH/PUT /servers/1.json
+# PATCH/PUT /servers/1
+# PATCH/PUT /servers/1.json
   def update
     respond_to do |format|
       name = Server.find(params[:id]).name
@@ -107,8 +114,8 @@ class ServersController < ApplicationController
     end
   end
 
-  # DELETE /servers/1
-  # DELETE /servers/1.json
+# DELETE /servers/1
+# DELETE /servers/1.json
   def destroy
     destroy_server @server
   end
@@ -121,7 +128,7 @@ class ServersController < ApplicationController
   end
 
   private
-  # Use callbacks to share common setup or constraints between actions.
+# Use callbacks to share common setup or constraints between actions.
   def set_server
     @server = Server.find(params[:id])
   end
@@ -141,7 +148,7 @@ class ServersController < ApplicationController
     @neo.execute_query("match (n) return n limit 50;")["data"]
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+# Never trust parameters from the scary internet, only allow the white list through.
   def server_params
     params.require(:server).permit(:name)
   end
@@ -180,4 +187,5 @@ class ServersController < ApplicationController
       source_id +=1 # check out the next source in the next iteration
     end
   end
+
 end
