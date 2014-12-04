@@ -35,10 +35,15 @@ class ServersController < ApplicationController
       # directPath =
       direct_path = @neo.get_node_relationships_to(server1, server2)
       if direct_path[0] != nil
-
+        tightness = @neo.get_relationship_properties(direct_path[0], [:tight])[:tight]
+        looseness = @neo.get_relationship_properties(direct_path[0], [:loose])[:loose]
+        @classical = [tightness, looseness]
+        @worst = [tightness, looseness]
+        @best = [tightness, looseness]
+        @moderate = [tightness, looseness]
       end
       all_paths = @neo.execute_query("
-        match (n1) -[r]- (n2) where id(n1) = " +params[:neoServer1]+ "
+        match (n1) -[r*]- (n2) where id(n1) = " +params[:neoServer1]+ "
         and id(n2) = "+params[:neoServer2]+ " return r")["data"]
 
     end

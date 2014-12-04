@@ -36,6 +36,57 @@
     </div>
 <% end %>
 
+
+<table>
+  <thead>
+  <tr>
+    <th>Impact Analysis</th>
+    <th>Tightly Coupling</th>
+    <th>Loosely Coupling</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% if @classical != nil %>
+      <tr>
+        <td>Classial: It is applicable to the ordinary kind of fuzzy dependencies.</td>
+        <td><%= @classical[0] %></td>
+        <td><%= @classical[1] %></td>
+      </tr>
+  <% end %>
+  <% if @worst != nil %>
+      <tr>
+        <td>Worst: The worst case impact analysis uses probabilistic
+          disjunciton and classical conjunction to compute the
+          indirect impacts. Thus giving a pessimistic view by
+          increasing the outcoming value for the degree of membership.</td>
+        <td><%= @worst[0] %></td>
+        <td><%= @worst[1] %></td>
+      </tr>
+  <% end %>
+  <% if @best != nil %>
+      <tr>
+        <td>Best: The best case impact analysis uses classical
+          disjunction and probabilistic conjunction to compute
+          the indirect impacts between the components. It gives
+          an optimistic view, meaning that the outcoming value
+          for the degree of membership is smaller.</td>
+        <td><%= @best[0] %></td>
+        <td><%= @best[1] %></td>
+      </tr>
+  <% end %>
+  <% if @moderate != nil %>
+      <tr>
+        <td>Moderate: The moderate impact analysis uses either a
+          probabilistic or a classical approach. It is best
+          applicable to the probabilistic dependencies.</td>
+        <td><%= @moderate[0] %></td>
+        <td><%= @moderate[1] %></td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
 <%= content_tag "div", class: "graph", data: {nodes: @nodes, links: @links} do %>
 
 <% end %>
