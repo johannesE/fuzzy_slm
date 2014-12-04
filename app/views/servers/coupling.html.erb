@@ -36,7 +36,9 @@
     </div>
 <% end %>
 
-
+<% if @server1 != nil && @server2 != nil%>
+    Showing dependencies for <span class="bold">
+  <%= @server1.name %></span> and <span class="bold"><%= @server2.name %></span>
 <table>
   <thead>
   <tr>
@@ -86,6 +88,8 @@
   <% end %>
   </tbody>
 </table>
+<% end %>
+
 
 <%= content_tag "div", class: "graph", data: {nodes: @nodes, links: @links} do %>
 

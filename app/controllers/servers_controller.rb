@@ -23,17 +23,17 @@ class ServersController < ApplicationController
 
   def coupling
     retrieve_data_for_graph
-    server1 = params[:neoServer1]
-    server2 = params[:neoServer2]
-    if server1 && server2
-      if server1 == server2 #direct coupling
+    @server1 = params[:neoServer1]
+    @server2 = params[:neoServer2]
+    if @server1 && @server2
+      if @server1 == @server2 #direct coupling
 
       end
-      server1 = Neography::Node.load(server1, @neo)
-      server2 = Neography::Node.load(server2, @neo)
+      @server1 = Neography::Node.load(@server1, @neo)
+      @server2 = Neography::Node.load(@server2, @neo)
       relationships = {"type" => 'connect', "direction" => "all"}
       # directPath =
-      direct_path = @neo.get_node_relationships_to(server1, server2)
+      direct_path = @neo.get_node_relationships_to(@server1, @server2)
       if direct_path[0] != nil
         tightness = @neo.get_relationship_properties(direct_path[0], [:tight])[:tight]
         looseness = @neo.get_relationship_properties(direct_path[0], [:loose])[:loose]
