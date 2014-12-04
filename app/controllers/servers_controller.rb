@@ -21,18 +21,48 @@ class ServersController < ApplicationController
   def edit
   end
 
+  def coupling
+    retrieve_data_for_graph
+    server1 = params[:neoServer1]
+    server2 = params[:neoServer2]
+    if server1 && server2
+      if server1 == server2 #direct coupling
+
+      end
+      server1 = Neography::Node.load(server1, @neo)
+      server2 = Neography::Node.load(server2, @neo)
+      relationships = {"type" => 'connect', "direction" => "all"}
+      # directPath =
+      direct_path = @neo.get_node_relationships_to(server1, server2)
+      if direct_path[0] != nil
+
+      end
+      all_paths = @neo.execute_query("
+        match (n1) -[r]- (n2) where id(n1) = " +params[:neoServer1]+ "
+        and id(n2) = "+params[:neoServer2]+ " return r")["data"]
+
+    end
+    render 'servers/coupling'
+  end
+
   def connect
     retrieve_data_for_graph
   end
 
   def do_connect
-    @neo = Neography::Rest.new
-    server1 = Neography::Node.load(params[:neoServer1], @neo)
-    server2 = Neography::Node.load(params[:neoServer2], @neo)
-    relation = @neo.create_relationship(:connected, server1, server2)
-    @neo.set_relationship_properties(relation, {tight: params[:tight_coupling]})
-    @neo.set_relationship_properties(relation, {loose: params[:loose_coupling]})
-    redirect_to action: 'connect', notice: 'Connection was successfully created.'
+    tight = params[:tight_coupling]
+    loose = params[:loose_coupling]
+    if params[:neoServer1] != params[:neoServer2] && tight && loose
+      @neo = Neography::Rest.new
+      server1 = Neography::Node.load(params[:neoServer1], @neo)
+      server2 = Neography::Node.load(params[:neoServer2], @neo)
+      relation = @neo.create_relationship(:connected, server1, server2)
+      @neo.set_relationship_properties(relation, {tight: tight})
+      @neo.set_relationship_properties(relation, {loose: loose})
+      redirect_to action: 'connect', notice: 'Connection was successfully created.'
+    else
+      redirect_to action: 'connect', alert: 'Connecting a node with itself  or leaving parameters empty is not permitted.'
+    end
   end
 
   # POST /servers
@@ -58,7 +88,7 @@ class ServersController < ApplicationController
   # PATCH/PUT /servers/1.json
   def update
     respond_to do |format|
-      name  = Server.find(params[:id]).name
+      name = Server.find(params[:id]).name
       n = Neography::Node.find('servers', 'name', name)
       n.name = server_params[:name]
       n.add_to_index('servers', 'name', server_params[:name]) #TODO: is this necessary?

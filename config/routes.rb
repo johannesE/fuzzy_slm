@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   # You can have the root of your site routed with "root"
   root 'welcome#index'
 
+  match 'servers/coupling' => 'servers#coupling', as: :coupling, via: [:get, :post]
   get 'servers/connect' => 'servers#connect', as: :connect
   post 'servers/destroy_everything' => 'servers#destroy_everything', as: :destroy_everything
   post 'servers/do_connect' =>'servers#do_connect'
