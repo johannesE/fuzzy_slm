@@ -55,8 +55,12 @@
         <%= submit_tag 'Submit', class: 'button postfix' %>
       </div>
     </div>
-
 <% end %>
+
+<div class="panel"><p>The <span class="bold">tightly coupling</span> measurement can be seen as an indicator of risk resulting from the tight connection between two components.
+  If one of two tightly coupled components fails, the dependent one will not function properly either.</p>
+  <p><span class="bold">Loosely coupling</span> includes the components' resilience  and mitigation into the evaluation.</p>
+</div>
 <br>
 <%= content_tag "div", class: "graph", data: {nodes: @nodes, links: @links} do %>
 

@@ -42,11 +42,16 @@ class ServersController < ApplicationController
         @worst = [tightness, looseness]
         @best = [tightness, looseness]
         @moderate = [tightness, looseness]
-      end
+      else
       all_paths = @neo.execute_query("
         match (n1) -[r*]- (n2) where id(n1) = " +params[:neoServer1]+ "
         and id(n2) = "+params[:neoServer2]+ " return r")["data"]
 
+      query1 = @neo.execute_query("Start n=node("+params[:neoServer1]+"), p=node("+params[:neoServer2]+") Match l = n - [k*] - p with extract(x in relationships(l)| x.loose) as levels Return  levels")["data"]
+      query2 = @neo.execute_query("Start n=node("+params[:neoServer1]+"), p=node("+params[:neoServer2]+") Match l = n - [k*] - p with extract(x in relationships(l)| x.tight) as levels Return  levels")["data"]
+
+
+      end
     end
     render 'servers/coupling'
   end
