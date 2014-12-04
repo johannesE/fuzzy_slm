@@ -61,5 +61,4 @@ doGraphStuff = ->
   console.log "ended to draw the graph"
   return
 
-$(document).on('page:load', doGraphStuff)
-$(document).ready(doGraphStuff)
+$(document).on('page:load', doGraphStuff())
