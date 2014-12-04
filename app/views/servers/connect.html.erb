@@ -1,54 +1,63 @@
-<nav class="top-bar" data-topbar role="navigation">
-  <ul class="title-area">
-    <li class="name">
-      <h1><a href="../">Home</a></h1>
-    </li>
-     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
-    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
-  </ul>
-
-  <section class="top-bar-section">
-
-    <ul class="left">
-      <li><a href="/servers">Listing servers</a></li>
-      <li><a href="/servers/new">New server</a></li>
-      <li  class="active"><a href="/servers/connect">Add relationships</a></li>
-       </ul>
-  </section>
-</nav>
-
-
 <h1>Connect two Nodes through fuzzy coupling</h1>
 
-
-<div id="mysection">
-
-  <h4>Node 1</h4>
 <%= form_tag 'do_connect' do %>
-    <select name="neoServer1">
 
-      <% @neo_servers.each do |neo| %>
-          <option value="<%= neo['server']['data']['id'] %>"><%= neo['server']['data']['name'] %></option>
-      <% end %>
-    </select>
-      <h4>Tightly coupling</h4>
+    <div class="row">
+      <div class="small-3 columns">
+        <div class="row">
+          <div class="small-3 columns">
+            <label for="right-label" class="right inline">Node 1</label>
+          </div>
+          <div class="small-9 columns">
+            <select name="neoServer1">
+              <% @neo_servers.each do |neo| %>
+                  <option value="<%= neo['server']['data']['id'] %>"><%= neo['server']['data']['name'] %></option>
+              <% end %>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="small-2 columns">
+        <div class="row collapse prefix-radius">
+          <div class="small-6 columns">
+            <span class="prefix">Tightly Coupling:</span>
+          </div>
+          <div class="small-6 columns">
+            <%= number_field_tag 'tight_coupling', nil, :step => 0.05, :in => 0..1 %>
+          </div>
+        </div>
+      </div>
+      <div class="small-2 columns">
+        <div class="row collapse prefix-radius">
+          <div class="small-6 columns">
+            <span class="prefix">Loosely Coupling:</span>
+          </div>
+          <div class="small-6 columns">
+            <%= number_field_tag 'loose_coupling', nil, :step => 0.05, :in => 0..1 %>
+          </div>
+        </div>
+      </div>
+      <div class="small-3 columns">
+        <div class="row">
+          <div class="small-3 columns">
+            <label for="right-label" class="right inline">Node 2</label>
+          </div>
+          <div class="small-9 columns">
+            <select name="neoServer2">
+              <% @neo_servers.each do |neo| %>
+                  <option value="<%= neo['server']['data']['id'] %>"><%= neo['server']['data']['name'] %></option>
+              <% end %>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="small-2 columns">
+        <%= submit_tag 'Submit', class: 'button postfix' %>
+      </div>
+    </div>
 
-    <%= number_field_tag 'tight_coupling', nil, :step => 0.05, :in => 0..1 %>
-
-      <h4>Loosely coupling</h4>
-    <%= number_field_tag 'loose_coupling', nil, :step => 0.05, :in => 0..1 %>
-      <h4>Node 2</h4>
-
-    <select name="neoServer2">
-      <% @neo_servers.each do |neo| %>
-          <option value="<%= neo['server']['data']['id'] %>"><%= neo['server']['data']['name'] %></option>
-      <% end %>
-    </select>
-
-    <%= submit_tag %>
 <% end %>
-</div>
-
-<%= content_tag "div", class: "graph", data: { nodes: @nodes, links: @links} do %>
+<br>
+<%= content_tag "div", class: "graph", data: {nodes: @nodes, links: @links} do %>
 
 <% end %>

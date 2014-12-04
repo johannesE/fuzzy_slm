@@ -24,7 +24,7 @@ doGraphStuff = ->
     d3.select(this).classed "fixed", d.fixed = true
     return
   console.log "started to draw the graph"
-  width = 960
+  width = 1000
   height = 500
   force = d3.layout.force().size([
     width

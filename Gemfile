@@ -30,7 +30,6 @@ gem 'spring',        group: :development
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
-gem 'foundation-rails', '~> 5.0.2.0'
 
 # Use unicorn as the app server
 # gem 'unicorn'
@@ -51,7 +50,10 @@ end
 gem 'neography'
 
 #bootstrap
-gem 'therubyracer'  # If using Ruby
+# gem 'therubyracer'  # If using Ruby
 # gem 'therubyrhino'  # If using JRuby
-gem 'less-rails-bootstrap' #https://github.com/metaskills/less-rails-bootstrap
+# gem 'less-rails-bootstrap' #https://github.com/metaskills/less-rails-bootstrap
+
+# foundation
+gem 'foundation-rails', '~> 5.0.2.0'
 
