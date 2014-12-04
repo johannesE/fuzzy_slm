@@ -43,13 +43,13 @@ class ServersController < ApplicationController
         @best = [tightness, looseness]
         @moderate = [tightness, looseness]
       else
-      all_paths = @neo.execute_query("
+        all_paths = @neo.execute_query("
         match (n1) -[r*]- (n2) where id(n1) = " +params[:neoServer1]+ "
         and id(n2) = "+params[:neoServer2]+ " return r")["data"]
 
-      query1 = @neo.execute_query("Start n=node("+params[:neoServer1]+"), p=node("+params[:neoServer2]+") Match l = n - [k*] - p with extract(x in relationships(l)| x.loose) as levels Return  levels")["data"]
-      query2 = @neo.execute_query("Start n=node("+params[:neoServer1]+"), p=node("+params[:neoServer2]+") Match l = n - [k*] - p with extract(x in relationships(l)| x.tight) as levels Return  levels")["data"]
-
+        query1 = @neo.execute_query("Start n=node("+params[:neoServer1]+"), p=node("+params[:neoServer2]+") Match l = n - [k*] - p with extract(x in relationships(l)| x.loose) as levels Return  levels")["data"]
+        query2 = @neo.execute_query("Start n=node("+params[:neoServer1]+"), p=node("+params[:neoServer2]+") Match l = n - [k*] - p with extract(x in relationships(l)| x.tight) as levels Return  levels")["data"]
+        best_case(query1, query2)
 
       end
     end
@@ -69,7 +69,7 @@ class ServersController < ApplicationController
       @neo = Neography::Rest.new
       server1 = Neography::Node.load(params[:neoServer1], @neo)
       server2 = Neography::Node.load(params[:neoServer2], @neo)
-      direct_path = @neo.get_node_relationships_to(@server1, @server2)
+      direct_path = @neo.get_node_relationships_to(server1, server2)
       if direct_path[0] != nil #there exists already a relation, so delete that before creating a new one
         @neo.delete_relationship direct_path[0]
       end
@@ -191,6 +191,51 @@ class ServersController < ApplicationController
       end
       source_id +=1 # check out the next source in the next iteration
     end
+  end
+
+
+  def best_case(loose, tight)
+    tightlycouplinglist = []
+    tightproduct = 1.0
+    @best = []
+    #and
+    tight.each do |x|
+      x[0].each do |y|
+        tightproduct = tightproduct * y.to_f
+      end
+      tightlycouplinglist.append(tightproduct)
+      tightproduct = 1.0
+    end
+
+    #or
+    @best[0]=tightlycouplinglist.max
+
+    #loosely
+    looselycouplinglist = []
+    product = 1.0
+    sum = 0.0
+    #and
+    loose.each do |record|
+      copy = record[0]
+      x = copy.length
+      y = 0
+      if x > 1
+        while y < x-1
+          product = copy[y].to_f * copy[y+1].to_f
+          sum = copy[y].to_f + copy[y+1].to_f
+          copy[y] = sum - product
+          y += 1
+        end
+        looselycouplinglist.append(copy[y-1])
+
+      else
+        looselycouplinglist.append(copy[0].to_f)
+      end
+    end
+    #or
+    @best[1]=looselycouplinglist.min
+
+
   end
 
 end
