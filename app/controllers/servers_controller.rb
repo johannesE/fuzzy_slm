@@ -49,8 +49,19 @@ class ServersController < ApplicationController
 
         query1 = @neo.execute_query("Start n=node("+params[:neoServer1]+"), p=node("+params[:neoServer2]+") Match l = n - [k*] - p with extract(x in relationships(l)| x.loose) as levels Return  levels")["data"]
         query2 = @neo.execute_query("Start n=node("+params[:neoServer1]+"), p=node("+params[:neoServer2]+") Match l = n - [k*] - p with extract(x in relationships(l)| x.tight) as levels Return  levels")["data"]
+        #empty values should never return 0, therefore remove them now.
+        query1.map!{ |x| x.map! {|xx| xx.each_index do |i|
+          if xx[i] == ""
+            xx.delete_at(i)
+          end
+        end } }
+        query2.map!{ |x| x.map! {|xx| xx.each_index do |i|
+          if xx[i] == ""
+            xx.delete_at(i)
+          end
+        end } }
         best_case(query1, query2)
-
+        worst_case(query1, query2)
       end
     end
     render 'servers/coupling'
@@ -123,6 +134,10 @@ class ServersController < ApplicationController
 # DELETE /servers/1.json
   def destroy
     destroy_server @server
+    respond_to do |format|
+      format.html { redirect_to servers_url, notice: 'Server was successfully destroyed.' }
+      format.json { head :no_content }
+    end
   end
 
   def destroy_everything
@@ -142,10 +157,6 @@ class ServersController < ApplicationController
     n = Neography::Node.find('servers', 'name', server.name)
     n.del if n
     server.destroy
-    respond_to do |format|
-      format.html { redirect_to servers_url, notice: 'Server was successfully destroyed.' }
-      format.json { head :no_content }
-    end
   end
 
   def get_all_neo_servers
@@ -193,6 +204,48 @@ class ServersController < ApplicationController
     end
   end
 
+  def worst_case(loose, tight)
+    tightlycouplinglist = []
+    @worst = []
+
+    tight.each do |x|
+      tightlycouplinglist.append(x[0].min)
+    end
+    #or
+
+    x = tightlycouplinglist.length
+    y = 0
+
+    if x > 1
+      while y < x-1
+        product = tightlycouplinglist[y].to_f*tightlycouplinglist[y+1].to_f
+        sum = tightlycouplinglist[y].to_f+tightlycouplinglist[y+1].to_f
+        tightlycouplinglist[y] = sum - product
+        y += 1
+      end
+      @worst[0]=tightlycouplinglist[y-1]
+    else
+      @worst[0]=tightlycouplinglist[0]
+    end
+    looselycouplinglist = []
+    product = 1.0
+
+    #and
+    loose.each do |record| #for some reason, there are strings around.
+      record.map! { |xy| xy.map! { |xyz| xyz.to_f } }
+    end
+    loose.each do |record|
+      looselycouplinglist.append(record[0].max)
+    end
+    #or
+    if looselycouplinglist.length > 1
+      looselycouplinglist.each { |x| product = product * x.to_f }
+      @worst[1]=product
+    else
+      @worst[1]=looselycouplinglist[0]
+    end
+
+  end
 
   def best_case(loose, tight)
     tightlycouplinglist = []
